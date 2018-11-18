@@ -414,19 +414,25 @@ class Search {
 					$k = $search[$val];
 					$mapsFrom[$k] = $k;
 					/* normal */
-					$m = preg_replace('/^0/', '+'.MY_COUNTRY_CODE, $k);
+					$m = preg_replace('/^0([^0])/', '+'.MY_COUNTRY_CODE.'$1', $k);
 					$mapsFrom[$m] = $m;
-					$m = preg_replace('/^0/', '00'.MY_COUNTRY_CODE, $k);
+					$m = preg_replace('/^0([^0])/', '00'.MY_COUNTRY_CODE.'$1', $k);
+					$mapsFrom[$m] = $m;
+					$m = preg_replace('/^0([^0])/', MY_COUNTRY_CODE.'$1', $k);
 					$mapsFrom[$m] = $m;
 					/* + */
 					$m = preg_replace('/^\+'.MY_COUNTRY_CODE.'/', '0', $k);
 					$mapsFrom[$m] = $m;
 					$m = preg_replace('/^\+/', '00', $k);
 					$mapsFrom[$m] = $m;
+					$m = preg_replace('/^\+/', '', $k);
+					$mapsFrom[$m] = $m;
 					/* 00 */
 					$m = preg_replace('/^00'.MY_COUNTRY_CODE.'/', '0', $k);
 					$mapsFrom[$m] = $m;
-					$m = preg_replace('/^00/', '\+', $k);
+					$m = preg_replace('/^00/', '+', $k);
+					$mapsFrom[$m] = $m;
+					$m = preg_replace('/^00/', '', $k);
 					$mapsFrom[$m] = $m;
 					//syslog(LOG_WARNING,"Search $mpc => $val: ".$search[$val]);
 					$search[$val] = implode(";",  array_keys($mapsFrom));
