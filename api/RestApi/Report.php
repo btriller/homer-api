@@ -479,8 +479,8 @@ class Report {
 				$statsData[$ipkey]["mos_counter"] = 0;
 				$statsData[$ipkey]["mos_average"] = 0;
 				$statsData[$ipkey]["mos_worst"] = 5;
-				$statsData[$ipkey]["packet_sent"] = 0;
-				$statsData[$ipkey]["packet_recv"] = 0;
+				$statsData[$ipkey]["packets_sent"] = 0;
+				$statsData[$ipkey]["packets_recv"] = 0;
 				$statsData[$ipkey]["jitter_max"] = 0;
 				$statsData[$ipkey]["jitter_avg"] = 0;
 				$statsData[$ipkey]["delay"] = 0;
@@ -804,8 +804,8 @@ class Report {
 				$statsData[$ipkey]["mos_counter"] = 0;
 				$statsData[$ipkey]["mos_average"] = 0;
 				$statsData[$ipkey]["mos_worst"] = 5;
-				$statsData[$ipkey]["packet_sent"] = 0;
-				$statsData[$ipkey]["packet_recv"] = 0;
+				$statsData[$ipkey]["packets_sent"] = 0;
+				$statsData[$ipkey]["packets_recv"] = 0;
 				$statsData[$ipkey]["jitter_max"] = 0;
 				$statsData[$ipkey]["jitter_avg"] = 0;
 				$statsData[$ipkey]["delay"] = 0;
