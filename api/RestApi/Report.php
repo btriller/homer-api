@@ -476,14 +476,14 @@ class Report {
 				$chartData[$ipkey]["jitter"] = array();
 				$chartData[$ipkey]["packets_lost"] = array();
 				$statsData[$ipkey] = array();
-				$statsData[$ipkey]["mos_counter"] =  0;
-				$statsData[$ipkey]["mos_average"] =  0;
-				$statsData[$ipkey]["mos_worst"] =  5;
-				$statsData[$ipkey]["packet_sent"] =  0;
-				$statsData[$ipkey]["packet_recv"] =  0;
-				$statsData[$ipkey]["jitter_max"] =  0;
-				$statsData[$ipkey]["jitter_avg"] =  0;
-				$statsData[$ipkey]["delay"] =  0;
+				$statsData[$ipkey]["mos_counter"] = 0;
+				$statsData[$ipkey]["mos_average"] = 0;
+				$statsData[$ipkey]["mos_worst"] = 5;
+				$statsData[$ipkey]["packet_sent"] = 0;
+				$statsData[$ipkey]["packet_recv"] = 0;
+				$statsData[$ipkey]["jitter_max"] = 0;
+				$statsData[$ipkey]["jitter_avg"] = 0;
+				$statsData[$ipkey]["delay"] = 0;
 			}
 
 			$lastlost = array();
@@ -801,14 +801,14 @@ class Report {
 				$chartData[$ipkey]["packets_lost"] = array();
 				$chartData[$ipkey]["packets"] =  array();
 				$statsData[$ipkey] = array();
-				$statsData[$ipkey]["mos_counter"] =  0;
-				$statsData[$ipkey]["mos_average"] =  0;
-				$statsData[$ipkey]["mos_worst"] =  5;
-				$statsData[$ipkey]["packet_sent"] =  0;
-				$statsData[$ipkey]["packet_recv"] =  0;
-				$statsData[$ipkey]["jitter_max"] =  0;
-				$statsData[$ipkey]["jitter_avg"] =  0;
-				$statsData[$ipkey]["delay"] =  0;
+				$statsData[$ipkey]["mos_counter"] = 0;
+				$statsData[$ipkey]["mos_average"] = 0;
+				$statsData[$ipkey]["mos_worst"] = 5;
+				$statsData[$ipkey]["packet_sent"] = 0;
+				$statsData[$ipkey]["packet_recv"] = 0;
+				$statsData[$ipkey]["jitter_max"] = 0;
+				$statsData[$ipkey]["jitter_avg"] = 0;
+				$statsData[$ipkey]["delay"] = 0;
 			}
 			$tmpMos = floatval($dataArray["MOS"]);
 			$tmpJitter = floatval($dataArray["JITTER"]);
