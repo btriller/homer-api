@@ -29,7 +29,7 @@ class Search {
 	protected $_instance = array();
 	private $query_types;
 	private $authmodule = true;
-	
+
 	function __construct() {
 		$this->query_types = array("call", "registration", "isup", "webrtc","rest");
 		if(SYSLOG_ENABLE == 1) openlog("homerlog", LOG_PID | LOG_PERROR, LOG_LOCAL0);
@@ -138,7 +138,7 @@ class Search {
 		}
 		return $answer;
 	}
-	
+
 	public function doTransactionArchiveExportData($timestamp, $param) {
 		/* auth */
 		if(count(($adata = $this->getLoggedIn()))) return $adata;
@@ -187,7 +187,7 @@ class Search {
 		if(count(($adata = $this->getLoggedIn()))) return $adata;
 		/* get our DB */
 		$db = $this->getContainer('db');
-		
+
 		/* get our DB Abstract Layer */
 		$layer = $this->getContainer('layer');
 		$data = array();
@@ -196,13 +196,13 @@ class Search {
 		$timestamp = $raw_get_data['timestamp'];
 		$param = $raw_get_data['param'];
 		if(isset($param['location'])) $lnodes = $param['location']['node'];
-		
+
 		$trans['call'] = getVar('call', false, $param['transaction'], 'bool');
 		$trans['registration'] = getVar('registration', false, $param["transaction"], 'bool');
 		$trans['isup'] = getVar('isup', false, $param['transaction'], 'bool');
 		$trans['webrtc'] = getVar('isup', false, $param['webrtc'], 'bool');
 		$trans['rest'] = getVar('rest', false, $param['transaction'], 'bool');
-		
+
 		/* default transaction */
 		if(!$trans['call'] && !$trans['registration'] && !$trans['rest'] && !$trans['isup'] && !$trans['webrtc']) {
 			$trans['rest'] = true;
@@ -215,14 +215,14 @@ class Search {
 		$time['to'] = getVar('to', round(microtime(true) * 1000), $timestamp, 'long');
 		$time['from_ts'] = intval($time['from']/1000);
 		$time['to_ts'] = intval($time['to']/1000);
-		
+
 		$and_or = getVar('orand', NULL, $param, 'string');
 		$b2b = getVar('b2b', false, $param, 'bool');
 		$uniq = getVar('uniq', false, $param, 'bool');
-		
+
 		$limit_orig = getVar('limit', 100, $param, 'int');
 		if($limit_orig <= 0) $limit_orig = 100;
-		
+
 		$callwhere = array();
 		if(count($callwhere)) $query .= " AND ( " .implode(" AND ", $callwhere). ")";
 		$nodes = array();
@@ -281,7 +281,7 @@ class Search {
 		}
 		/* apply aliases */
 		$this->applyAliases($data);
-		
+
 		if($uniq) {
 			$message = array();
 			foreach($data as $key=>$row) {
@@ -338,7 +338,7 @@ class Search {
 			$full = getVar('body', false, $param['receive'], 'bool');
 		}
 		if(isset($param['location'])) $lnodes = $param['location']['node'];
-		
+
 		$time['from'] = getVar('from', round((microtime(true) - 300) * 1000), $timestamp, 'long');
 		$time['to'] = getVar('to', round(microtime(true) * 1000), $timestamp, 'long');
 		$time['from_ts'] = floor($time['from']/1000);
@@ -373,8 +373,8 @@ class Search {
 		$search['proto'] = getVar('proto', NULL, $param['search'], 'string');
 		$search['family'] = getVar('family', NULL, $param['search'], 'string');
 		$search['custom_field1'] = getVar('custom_field1', NULL, $param['search'], 'string');
-		$search['custom_field2'] = getVar('custom_field2', NULL, $param['search'], 'string'); 
-		$search['custom_field3'] = getVar('custom_field3', NULL, $param['search'], 'string'); 
+		$search['custom_field2'] = getVar('custom_field2', NULL, $param['search'], 'string');
+		$search['custom_field3'] = getVar('custom_field3', NULL, $param['search'], 'string');
 		/*isup*/
 		$isup_search['calling_number'] = getVar('from_user', NULL, $param['search'], 'string');
 		$isup_search['called_number'] = getVar('to_user', NULL, $param['search'], 'string');
@@ -386,7 +386,7 @@ class Search {
 		$isup_search['node'] = getVar('node', NULL, $param['search'], 'string');
 		$isup_search['proto'] = getVar('proto', NULL, $param['search'], 'string');
 		$isup_search['family'] = getVar('family', NULL, $param['search'], 'string');
-		
+
 		/*webrtc*/
 		$webrtc_search['msg'] = getVar('msg', NULL, $param['search'], 'string');
 		$webrtc_search['method'] = getVar('method', NULL, $param['search'], 'string');
@@ -405,7 +405,7 @@ class Search {
 		#$limit_orig = getVar('limit', 100, $param, 'int');
 		$limit_orig = getVar('limit', 100, $param['search'], 'int');
 		if($limit_orig <= 0) $limit_orig = 100;
-		
+
 		$mapsCheck = array('from_user', 'to_user', 'ruri_user', 'pid_user');
 		if(NORMALIZE_NUMBER == 1) {
 			foreach($mapsCheck as $mpc=>$val) {
@@ -433,19 +433,19 @@ class Search {
 				}
 			}
 		}
-		//$search['correlation_id'] = implode(";",  array_keys($mapsCallid));	
+		//$search['correlation_id'] = implode(";",  array_keys($mapsCallid));
 		/* callid correlation */
 		$callwhere = array();
 		$callwhere = generateWhere($search, $and_or, $db, $b2b);
 		$isup_callwhere = generateWhere($isup_search, $and_or, $db, $b2b);
 		$webrtc_callwhere = generateWhere($webrtc_search, $and_or, $db, $b2b);
-		
+
 		$nodes = array();
 		if(SINGLE_NODE == 1) $nodes[] = array( "dbname" =>  DB_HOMER, "name" => "single");
 		else {
 			foreach($lnodes as $lnd) $nodes[] = $this->getNode($lnd['name']);
 		}
-		
+
 		$layerHelper = array();
 		$layerHelper['table'] = array();
 		$layerHelper['order'] = array();
@@ -455,7 +455,7 @@ class Search {
 		$layerHelper['time'] = $time;
 		$layerHelper['fields']['msg'] = $full;
 		$timearray = $this->getTimeArray($time['from_ts'], $time['to_ts']);
-	
+
 		foreach($nodes as $node) {
 			$db->dbconnect_node($node);
 			$limit = $limit_orig;
@@ -504,7 +504,7 @@ class Search {
 		}
 		/* apply aliases */
 		$this->applyAliases($data);
-		
+
 		if($uniq) {
 			$message = array();
 			foreach($data as $key=>$row) {
@@ -524,21 +524,21 @@ class Search {
 			/* sorting */
 			usort($data, create_function('$a, $b', 'return $a["micro_ts"] > $b["micro_ts"] ? 1 : -1;'));
 		}
-		
+
 		/* workaround for umlauts */
         	foreach($data as $key=>$row) {
             		$row['msg'] = preg_replace('/[öüäÖÄÜß]/i', '', $row['msg']);
             		$data[$key]['msg'] = utf8_decode($row["msg"]);
-			
+
 			$row['reply_reason'] = preg_replace('/[öüäÖÄÜß]/i', '', $row['reply_reason']);
 			$data[$key]['reply_reason'] = utf8_decode($row["reply_reason"]);
         	}
 
 		if(SYSLOG_ENABLE == 1) closelog();
-		
+
 		return $data;
 	}
-	
+
 	public function doExportMessagesData($timestamp, $param, $full = false, $count = false) {
 		if(!defined('ARCHIVE_DATABASE')) return false;
 		/* get our DB */
@@ -563,7 +563,7 @@ class Search {
 			$trans['webrtc'] = false;
 		}
 		if(isset($param['location'])) $lnodes = $param['location']['node'];
-				
+
 		$time['from'] = getVar('from', round((microtime(true) - 300) * 1000), $timestamp, 'long');
 		$time['to'] = getVar('to', round(microtime(true) * 1000), $timestamp, 'long');
 		$time['from_ts'] = floor($time['from']/1000);
@@ -596,8 +596,8 @@ class Search {
 		$search['proto'] = getVar('proto', NULL, $param['search'], 'string');
 		$search['family'] = getVar('family', NULL, $param['search'], 'string');
 		$search['custom_field1'] = getVar('custom_field1', NULL, $param['search'], 'string');
-		$search['custom_field2'] = getVar('custom_field2', NULL, $param['search'], 'string'); 
-		$search['custom_field3'] = getVar('custom_field3', NULL, $param['search'], 'string'); 
+		$search['custom_field2'] = getVar('custom_field2', NULL, $param['search'], 'string');
+		$search['custom_field3'] = getVar('custom_field3', NULL, $param['search'], 'string');
 		/* ISUP */
 		$isup_search['calling_number'] = getVar('from_user', NULL, $param['search'], 'string');
 		$isup_search['called_number'] = getVar('to_user', NULL, $param['search'], 'string');
@@ -609,7 +609,7 @@ class Search {
 		$isup_search['node'] = getVar('node', NULL, $param['search'], 'string');
 		$isup_search['proto'] = getVar('proto', NULL, $param['search'], 'string');
 		$isup_search['family'] = getVar('family', NULL, $param['search'], 'string');
-		
+
 		/* WEBRTC */
 		$webrtc_search['msg'] = getVar('msg', NULL, $param['search'], 'string');
 		$webrtc_search['method'] = getVar('method', NULL, $param['search'], 'string');
@@ -628,19 +628,19 @@ class Search {
 		#$limit_orig = getVar('limit', 100, $param, 'int');
 		$limit_orig = getVar('limit', 100, $param['search'], 'int');
 		if($limit_orig <= 0) $limit_orig = 100;
-	
+
 		/* callid correlation */
 		$callwhere = array();
 		$callwhere = generateWhere($search, $and_or, $db, $b2b);
 		$isup_callwhere = generateWhere($isup_search, $and_or, $db, $b2b);
 		$webrtc_callwhere = generateWhere($webrtc_search, $and_or, $db, $b2b);
-		
+
 		$nodes = array();
 		if(SINGLE_NODE == 1) $nodes[] = array( "dbname" =>  DB_HOMER, "name" => "single");
 		else {
 			foreach($lnodes as $lnd) $nodes[] = $this->getNode($lnd['name']);
 		}
-		
+
 		$layerHelper = array();
 		$layerHelper['table'] = array();
 		$layerHelper['order'] = array();
@@ -699,19 +699,19 @@ class Search {
 		$db->dbconnect();
 		/* get our DB Abstract Layer */
 		$layer = $this->getContainer('layer');
-		 
+
 		$trans = array();
 		$data = array();
 		$lnodes = array();
-		
+
 		if(isset($param['location'])) $lnodes = $param['location']['node'];
-				
+
 		$trans['call'] = getVar('call', false, $param['transaction'], 'bool');
 		$trans['registration'] = getVar('registration', false, $param['transaction'], 'bool');
 		$trans['isup'] = getVar('isup', false, $param['transaction'], 'bool');
 		$trans['webrtc'] = getVar('webrtc', false, $param['transaction'], 'bool');
 		$trans['rest'] = getVar('rest', false, $param['transaction'], 'bool');
-		
+
 		/* default transaction */
 		if(!$trans['call'] && !$trans['registration'] && !$trans['rest'] && !$trans['isup'] && !$trans['webrtc']) {
 			$trans['rest'] = true;
@@ -725,7 +725,7 @@ class Search {
 		$time['to'] = getVar('to', round(microtime(true) * 1000), $timestamp, 'long');
 		$time['from_ts'] = floor($time['from']/1000);
 		$time['to_ts'] = round($time['to']/1000);
-		
+
 		//workaround for BYE click
 		$time['from_ts'] -=600;
 		$limit_orig = getVar('limit', 200, $param['search'], 'int');
@@ -746,18 +746,18 @@ class Search {
 		else {
 			foreach($lnodes as $lnd) $nodes[] = $this->getNode($lnd['name']);
 		}
-	
+
 		$timearray = $this->getTimeArray($time['from_ts'], $time['to_ts']);
 		$layerHelper = array();
-		$layerHelper['table'] = array(); 
-		$layerHelper['order'] = array(); 
-		$layerHelper['where'] = array(); 
+		$layerHelper['table'] = array();
+		$layerHelper['order'] = array();
+		$layerHelper['where'] = array();
 		$layerHelper['fields'] = array();
 		$layerHelper['values'] = array();
 		$layerHelper['time'] = $time;
 		$layerHelper['table']['base'] = "sip_capture";
 		$layerHelper['where']['type'] = $and_or ? "OR" : "AND";
-		$layerHelper['where']['param'] = $callwhere;   
+		$layerHelper['where']['param'] = $callwhere;
 		$layerHelper['table']['destination'] = array();
 		$layerHelper['table']['destination']['db'] = ARCHIVE_DATABASE;
 
@@ -781,7 +781,7 @@ class Search {
 		}
 		return true;
 	}
-			
+
 	public function doPcapExportData($timestamp, $param) {
 		if(count(($adata = $this->getLoggedIn()))) return $adata;
 		$data = $this->doSearchMessagesData($timestamp, $param, true, false);
@@ -793,7 +793,7 @@ class Search {
 	public function doTextExportData($timestamp, $param) {
 		if(count(($adata = $this->getLoggedIn()))) return $adata;
 		$data = $this->doSearchMessagesData($timestamp, $param, true);
-		
+
 		if(isset($param['timezone']) && isset($param['timezone']['value'])) {
 			$val = getVar('value', 0, $param['timezone'], 'long');
 			$offset = $val < -1 ? abs($val) : -$val;
@@ -804,24 +804,24 @@ class Search {
 		sendFile(200, "OK", $pcapfile, $fsize, $buf);
 		return;
 	}
-	
+
 	public function doCountExportData($timestamp, $param) {
 		if(count(($adata = $this->getLoggedIn()))) return $adata;
 		$data = $this->doSearchMessagesData($timestamp, $param, true, true);
 		return $data;
 	}
-	
+
 	public function doCloudExportData($timestamp, $param) {
 		if(count(($adata = $this->getLoggedIn()))) return $adata;
 		$data = $this->doSearchMessagesData($timestamp, $param, true);
 		list($pcapfile, $fsize, $buf) = $this->generateHomerTextPCAP($data, 0, date('Z'));
-		
+
 		$apishark = CLOUD_STORAGE_URI."/api/v1/".CLOUD_STORAGE_API."/upload";
 		$pfile = PCAPDIR."/".$pcapfile;
 		$fileHandle = fopen($pfile, 'w') or die("Error opening file");
 		fwrite($fileHandle, $buf);
 		fclose($fileHandle);
-		
+
 		$cfile = $this->getCurlValue($pfile,'application/cap', $pcapfile);
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -829,16 +829,16 @@ class Search {
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible;)");
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);  
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		curl_setopt($ch, CURLOPT_URL, $apishark);
 		curl_setopt($ch, CURLOPT_POST, true);
 		$post = array("file" => $cfile);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
 		$response = curl_exec($ch);
 		unlink($pfile);
-	
+
 		$data = array();
-		$json=json_decode($response,true);	
+		$json=json_decode($response,true);
 		if(array_key_exists('id', $json)) {
 			$url = CLOUD_STORAGE_URI."/captures/".$json[id];
 			$data["url"] = $url;
@@ -858,23 +858,23 @@ class Search {
 		if(count(($adata = $this->getLoggedIn()))) return $adata;
 		/* get our DB */
 		$data = $this->getMessagesByMethod($timestamp, $param);
-		
+
 		while(list($i,$message)=each($data)) {
 			$new_message = '';
 			$isup_part = array();
-			
+
 			if(preg_match('/multipart/i', $message['content_type'])){
 				$d_message = $this->getMultipartMessage($message['msg'],$message['content_type']);
 				$new_message = $d_message['headers']."\n\n";
-				
+
 				while(list($k,$part)=each($d_message['mime_parts'])){
 					$new_message .= "--".$d_message['boundary']."\n";
 					$new_message .= $part['header'];
 					$new_message .= "\n\n";
-					
+
 					if(preg_match('/sdp/i', $part['header']))
 						$new_message .= $part['body'];
-					
+
 					if(preg_match('/isup/i', $part['header'])){
 						$new_message .= $this->decodeIsupData($part['body'],'hex_decode');
 						if(TSHARK_ENABLED == "1")
@@ -883,22 +883,22 @@ class Search {
 					$new_message .= "\n\n";
 				}
 				$new_message .= "--".$d_message['boundary']."--\n\n";
-				
+
 				if($isup_part)
 					$new_message .= "pcap file: ".$isup_part['file']."\n".$isup_part['content'];
-			} 
-			else if (preg_match('/isup/i', $message['content_type'])) { 
+			}
+			else if (preg_match('/isup/i', $message['content_type'])) {
 				$part = array();
 				$lines = explode ( "\r\n\r\n", $message['msg'] );
 				$part ['header'] = $lines [0];
 				$part ['body'] = $lines [1];
 				$new_message .= $part['header']."\n\n";
 				$new_message .= $this->decodeIsupData($part['body'],'hex_decode');
-	
+
 				if(TSHARK_ENABLED == "1"){
 					$isup_part = $this->decodeIsupData($part['body'],'isup_decode');
 					$new_message .= "\n\npcap file: ".$isup_part['file']."\n\n".$isup_part['content'];
-				}	
+				}
 			}
 			else {
 				$new_message = $message['msg'];
@@ -931,10 +931,10 @@ class Search {
 		$db = $this->getContainer('db');
 		$db->select_db(DB_CONFIGURATION);
 		$db->dbconnect();
-		
+
 		/* get our DB Abstract Layer */
 		$layer = $this->getContainer('layer');
-		 
+
 		$data = array();
 		$record_id = getVar('id', 0, $param['search'], 'int');
 		$callid = getVar('callid', "", $param['search'], 'string');
@@ -943,7 +943,7 @@ class Search {
 		$trans['isup'] = getVar('isup', false, $param['transaction'], 'bool');
 		$trans['webrtc'] = getVar('webrtc', false, $param['transaction'], 'bool');
 		$trans['rest'] = getVar('rest', false, $param['transaction'], 'bool');
-		
+
 		/* default transaction */
 		if(!$trans['call'] && !$trans['registration'] && !$trans['rest'] && !$trans['isup'] && !$trans['webrtc']) {
 			$trans['rest'] = true;
@@ -973,7 +973,7 @@ class Search {
 		$layerHelper['order'] = array();
 		$layerHelper['where'] = array();
 		$layerHelper['fields'] = array();
-		
+
 		$layerHelper['time'] = $time;
 		$layerHelper['fields']['msg'] = true;
 		if($uniq) $layerHelper['fields']['md5msg'] = true;
@@ -1004,14 +1004,14 @@ class Search {
 						}
 						$layerHelper['values'][] = "'".$query_type."' as trans";
 						$layerHelper['values'][] = "'".$node['name']."' as dbnode";
-						
+
 						$layerHelper['table']['timestamp'] = $tkey;
 						$layerHelper['order']['limit'] = $limit;
-						
+
 						$query = $layer->querySearchData($layerHelper);
 						$noderows = $db->loadObjectArray($query);
 						if(SYSLOG_ENABLE == 1) syslog(LOG_WARNING,"method query: ".$query);
-						
+
 						$data = array_merge($data,$noderows);
 						$limit -= count($noderows);
 					}
@@ -1023,10 +1023,10 @@ class Search {
         	foreach($data as $key=>$row) {
             		$row['msg'] = preg_replace('/[öüäÖÄÜß]/i', '', $row['msg']);
             		$data[$key]['msg'] = utf8_decode($row["msg"]);
-			
+
 			$row['reply_reason'] = preg_replace('/[öüäÖÄÜß]/i', '', $row['reply_reason']);
 			$data[$key]['reply_reason'] = utf8_decode($row["reply_reason"]);
-        	}		
+        	}
 		/* apply aliases */
 		$this->applyAliases($data);
 		return $data;
@@ -1111,7 +1111,7 @@ class Search {
 		$trans['isup'] = getVar('isup', false, $param['transaction'], 'bool');
 		$trans['webrtc'] = getVar('webrtc', false, $param['transaction'], 'bool');
 		$trans['rest'] = getVar('rest', false, $param['transaction'], 'bool');
-		
+
 		/* default transaction */
 		if(!$trans['call'] && !$trans['registration'] && !$trans['rest'] && !$trans['isup'] && !$trans['webrtc']) {
 			$trans['rest'] = true;
@@ -1124,7 +1124,7 @@ class Search {
 		$time['to'] = getVar('to', round(microtime(true) * 1000), $timestamp, 'long');
 		$time['from_ts'] = floor($time['from']/1000);
 		$time['to_ts'] = round($time['to']/1000);
-		
+
 		$limit = getVar('limit', 100, $param['search'], 'int');
 		if($limit <= 0) $limit = 100;
 		$record_id = getVar('id', 0, $param['search'], 'int');
@@ -1166,12 +1166,12 @@ class Search {
 				}
 			}
 		}
-		
+
 		 /* workaround for umlauts */
         	foreach($data as $key=>$row) {
             		$row['msg'] = preg_replace('/[öüäÖÄÜß]/i', '', $row['msg']);
             		$data[$key]['msg'] = utf8_decode($row["msg"]);
-			
+
 			$row['reply_reason'] = preg_replace('/[öüäÖÄÜß]/i', '', $row['reply_reason']);
 			$data[$key]['reply_reason'] = utf8_decode($row["reply_reason"]);
         	}
@@ -1214,15 +1214,15 @@ class Search {
 		$callwhere = array();
 		$answer = array();
 		$nodes = array();
-		
+
 		if(isset($param['location'])) $lnodes = $param['location']['node'];
-		
+
 		$trans['call'] = getVar('call', false, $param['transaction'], 'bool');
 		$trans['registration'] = getVar('registration', false, $param['transaction'], 'bool');
 		$trans['isup'] = getVar('isup', false, $param['transaction'], 'bool');
 		$trans['webrtc'] = getVar('webrtc', false, $param['transaction'], 'bool');
 		$trans['rest'] = getVar('rest', false, $param['transaction'], 'bool');
-		
+
 		/* default transaction */
 		if(!$trans['call'] && !$trans['registration'] && !$trans['rest'] && !$trans['isup'] && !$trans['webrtc']) {
 			$trans['rest'] = true;
@@ -1236,7 +1236,7 @@ class Search {
 		$time['to'] = getVar('to', round(microtime(true) * 1000), $timestamp, 'long');
 		$time['from_ts'] = floor($time['from']/1000);
 		$time['to_ts'] = round($time['to']/1000);
-		
+
 		//workaround for BYE click
 		$time['from_ts'] -=600;
 		$limit_orig = getVar('limit', 200, $param['search'], 'int');
@@ -1252,7 +1252,7 @@ class Search {
 		$webrtc_search['session_id'] = implode(";", $correlations);
 		$isup_callwhere = generateWhere($isup_search, $and_or, $db, $b2b);
 		$webrtc_callwhere = generateWhere($webrtc_search, $and_or, $db, $b2b);
-		
+
 		if(BLEGTAIL!= "0" && CLEGTAIL!= "0"){
 			$mapsCallid = array();
 			$cn = count($callids);
@@ -1305,7 +1305,7 @@ class Search {
 			$search['callid'] = implode(";", $callids);
 			$callwhere = generateWhere($search, $and_or, $db, $b2b);
 		}
-		
+
 		if(SINGLE_NODE == 1) $nodes[] = array( "dbname" =>  DB_HOMER, "name" => "single");
 		else {
 			foreach($lnodes as $lnd) $nodes[] = $this->getNode($lnd['name']);
@@ -1321,7 +1321,7 @@ class Search {
 		$layerHelper['where']['type'] = $and_or ? "OR" : "AND";
 		$layerHelper['fields']['msg'] = true;
 		if($uniq) $layerHelper['fields']['md5msg'] = true;
-		
+
 		foreach($nodes as $node) {
 			$db->dbconnect_node($node);
 			$limit = $limit_orig;
@@ -1364,7 +1364,7 @@ class Search {
 		}
 		/* apply aliases */
 		$this->applyAliases($data);
-		
+
 		if($uniq) {
 			$message = array();
 			foreach($data as $key=>$row) {
@@ -1372,16 +1372,16 @@ class Search {
 				else $message[$row['md5sum']] = $row['node'];
 			}
 		}
-		
+
 		/* workaround for umlauts */
 	        foreach($data as $key=>$row) {
 			$row['msg'] = preg_replace('/[öüäÖÄÜß]/i', '', $row['msg']);
 			$data[$key]['msg'] = utf8_decode($row["msg"]);
-			
+
 			$row['reply_reason'] = preg_replace('/[öüäÖÄÜß]/i', '', $row['reply_reason']);
 			$data[$key]['reply_reason'] = utf8_decode($row["reply_reason"]);
         	}
-		
+
 		/* sorting */
 		usort($data, create_function('$a, $b', 'return $a["micro_ts"] > $b["micro_ts"] ? 1 : -1;'));
 		return $data;
@@ -1395,7 +1395,7 @@ class Search {
 		$data = array();
 		$search = array();
 		$lnodes = array();
-		$answer = array();  
+		$answer = array();
 		$callwhere = array();
 		/* get our DB Abstract Layer */
 		$layer = $this->getContainer('layer');
@@ -1415,7 +1415,7 @@ class Search {
 		$and_or = getVar('orand', NULL, $param['search'], 'string');
 		$limit_orig = getVar('limit', 100, $param, 'int');
 		$callids = getVar('callid', array(), $param['search'], 'array');
-		
+
 		$mapsCallid = array();
 		$cn = count($callids);
 
@@ -1432,7 +1432,7 @@ class Search {
 					$mapsCallid[$k] = $k;
 				}
 				$s = substr($k, 0, -1);
-				$mapsCallid[$s] =  $s; 
+				$mapsCallid[$s] =  $s;
 			}
 			$k = substr($callids[$i], 0, -1);
 			$mapsCallid[$k] =  $k;
@@ -1454,7 +1454,7 @@ class Search {
 		else {
 			foreach($lnodes as $lnd) $nodes[] = $this->getNode($lnd['name']);
 		}
-	
+
 		$layerHelper = array();
 		$layerHelper['table'] = array();
 		$layerHelper['order'] = array();
@@ -1479,7 +1479,7 @@ class Search {
 			$layerHelper['values'][] = "*";
 			$layerHelper['values'][] = "'".$node['name']."' as dbnode";
 			if(empty($callwhere)) $callwhere = generateWhere($search, $and_or, $db, 0);
-			$layerHelper['order']['limit'] = $limit;   
+			$layerHelper['order']['limit'] = $limit;
 			$layerHelper['where']['param'] = $callwhere;
 			$query = $layer->querySearchData($layerHelper);
 			$noderows = $db->loadObjectArray($query);
@@ -1489,7 +1489,7 @@ class Search {
 		}
 		/* sorting */
 		usort($data, create_function('$a, $b', 'return $a["micro_ts"] > $b["micro_ts"] ? 1 : -1;'));
-				
+
 		if(empty($data)) {
 			$answer['sid'] = session_id();
 			$answer['auth'] = 'true';
@@ -1506,7 +1506,7 @@ class Search {
 			$answer['data'] = $data;
 			$answer['count'] = count($data);
 		}
-		
+
 		return $data;
 	}
 
@@ -1532,18 +1532,18 @@ class Search {
 			//if(!$min_ts) $min_ts = $row['micro_ts'];
 		}
 		$data =  $this->getMessagesForTransaction($timestamp, $param);
-		
+
 		foreach($data as $row) {
 			$localdata[] = $this->getSIPCflow((object) $row, $hosts, $info, $uac, $hostcount, $rtpinfo, false);
 			if(!$min_ts) $min_ts = $row['micro_ts'];
 		}
 		//print_r($localdata);
 		//exit;
-		
+
 		//print_r($data);
 		//exit;
 		usort($localdata, create_function('$a, $b', 'return $a["micro_ts"] > $b["micro_ts"] ? 1 : -1;'));
-				
+
 		if(!$max_ts) {
 			$max_ts_tmp = end($data);
 			$max_ts = $max_ts_tmp['micro_ts'];
@@ -2113,18 +2113,18 @@ class Search {
 		if(preg_match('/isup/i', $data->content_type)) {
 			$part = array();
 			$lines = explode ( "\r\n\r\n", $data->msg );
-			
+
 			$part ['header'] = $lines [0];
 			$part ['body'] = $lines [1];
-			
+
 			$method = $this->decodeIsupData($part ['body'],'method_name');
 			$method_text .= ' (ISUP'.( ($method)?'-'.$method:'' ).') ';
-			
+
 		}
 		if(preg_match('/[0-9A-Za-z_-]/i', $data->auth_user)) $method_text .= " (AUTH)";
 		if(preg_match('/multipart/i', $data->content_type)){
 			$d_message = $this->getMultipartMessage($data->msg,$data->content_type);
-			
+
 			while(list($k,$part)=each($d_message['mime_parts'])){
 				if(preg_match('/sdp/i', $part['header'])) $ctype_names[] = 'SDP';
 				if(preg_match('/isup/i', $part['header'])) {
@@ -2147,7 +2147,7 @@ class Search {
 		else $calldata["destination"] = 1;
 		return $calldata;
 	}
-	
+
 	function getRTCflow($data, &$hosts, &$info, &$uac, &$hostcount, &$rtpinfo, $message_include) {
 		$calldata = array();
 		$arrow_step=1;
@@ -2234,7 +2234,7 @@ class Search {
 		else if(preg_match('/^call.ringing/', $method_text)) $msgcol = "purple";
 		else if(preg_match('/^call.start/', $method_text)) $msgcol = 'blue';
 		else $msgcol = 'black';
-		
+
 		$calldata["msg_color"] = $msgcol;
 		/*IF */
 		if($hosts[$src_id] > $hosts[$dst_id]) $calldata["destination"] = 2;
@@ -2253,29 +2253,29 @@ class Search {
 	public function doTextExport($timestamp, $param) {
 		if(count(($adata = $this->getLoggedIn()))) return $adata;
 		$data =  $this->getMessagesForTransaction($timestamp, $param);
-		
+
 		if(isset($param['timezone']) && isset($param['timezone']['value'])) {
 			$val = getVar('value', 0, $param['timezone'], 'long');
 			$offset = $val < -1 ? abs($val) : -$val;
 			$offset *=60;
 		}
-		else $offset = date('Z');                
+		else $offset = date('Z');
 		list($pcapfile, $fsize, $buf) = $this->generateHomerTextPCAP($data, 1, $offset);
 		sendFile(200, "OK", $pcapfile, $fsize, $buf);
 		return;
 	}
-	
+
 	public function doCloudExport($timestamp, $param) {
 		if(count(($adata = $this->getLoggedIn()))) return $adata;
 		$data =  $this->getMessagesForTransaction($timestamp, $param);
 		list($pcapfile, $fsize, $buf) = $this->generateHomerTextPCAP($data, 0, date('Z'));
-		
+
 		$apishark = CLOUD_STORAGE_URI."/api/v1/".CLOUD_STORAGE_API."/upload";
 		$pfile = PCAPDIR."/".$pcapfile;
 		$fileHandle = fopen($pfile, 'w') or die("Error opening file");
 		fwrite($fileHandle, $buf);
 		fclose($fileHandle);
-		
+
 		$cfile = $this->getCurlValue($pfile,'application/cap',$pcapfile);
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -2283,14 +2283,14 @@ class Search {
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/4.0 (compatible;)");
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);  
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		curl_setopt($ch, CURLOPT_URL, $apishark);
 		curl_setopt($ch, CURLOPT_POST, true);
 		$post = array("file" => $cfile);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
 		$response = curl_exec($ch);
 		unlink($pfile);
-		
+
 		$data = array();
 		$json=json_decode($response,true);
 		if(array_key_exists('id', $json)) {
@@ -2342,7 +2342,7 @@ class Search {
 			$offset = $val < -1 ? abs($val) : -$val;
 			$offset *=60;
 		}
-		else $offset = date('Z');  
+		else $offset = date('Z');
 		list($pcapfile, $fsize, $buf) = $this->generateHomerTextPCAP($data, 1, $offset);
 		sendFile(200, "OK", $pcapfile, $fsize, $buf);
 		return;
@@ -2366,7 +2366,7 @@ class Search {
 			data => 0,
 			total => 0
 		);
-	
+
 		//Write PCAP HEADER
 		$pcaphdr = array(
 			magic => 2712847316,
@@ -2377,7 +2377,7 @@ class Search {
 			snaplen => 102400,
 			network => 1
 		);
-	
+
 		$buf="";
 		$pcap_packet = pack("lssllll", $pcaphdr['magic'], $pcaphdr['version_major'], $pcaphdr['version_minor'], $pcaphdr['thiszone'], $pcaphdr['sigfigs'], $pcaphdr['snaplen'], $pcaphdr['network']);
 		//Ethernet header
@@ -2409,11 +2409,11 @@ class Search {
 					//Pcap record
 					$pcaprec_hdr = array();
 					$pcaprec_hdr['ts_sec'] = intval($result['micro_ts'] / 1000000);	 //4
-					$pcaprec_hdr['ts_usec'] = $result['micro_ts'] - ($pcaprec_hdr['ts_sec']*1000000);	//4	  
+					$pcaprec_hdr['ts_usec'] = $result['micro_ts'] - ($pcaprec_hdr['ts_sec']*1000000);	//4
 					$pcaprec_hdr['incl_len'] = $size['total']; //4
 					$pcaprec_hdr['orig_len'] = $size['total']; //4
 
-					$pcaprec_packet = pack("llll", $pcaprec_hdr['ts_sec'], $pcaprec_hdr['ts_usec'], 
+					$pcaprec_packet = pack("llll", $pcaprec_hdr['ts_sec'], $pcaprec_hdr['ts_usec'],
 					$pcaprec_hdr['incl_len'], $pcaprec_hdr['orig_len']);
 
 					$buf.=$pcaprec_packet;
@@ -2425,13 +2425,13 @@ class Search {
 					$udp_hdr = array();
 					$udp_hdr['src_port'] = $result['source_port'];
 					$udp_hdr['dst_port'] = $result['destination_port'];
-					$udp_hdr['length'] = $size['udp'] + $size['data'];	
+					$udp_hdr['length'] = $size['udp'] + $size['data'];
 					$udp_hdr['checksum'] = 0;
 
 					//Calculate UDP checksum
 					$pseudo = pack("nnnna*", $udp_hdr['src_port'],$udp_hdr['dst_port'], $udp_hdr['length'], $udp_hdr['checksum'], $data);
 					$udp_hdr['checksum'] = $this->pcapCheckSum($pseudo);
-					
+
 					$ipv6_hdr = array();
 					$ipv6_hdr['version'] = 6;		//4	bits
 					$ipv6_hdr['traffic_class'] = "00000000";		//	8 bits
@@ -2448,7 +2448,7 @@ class Search {
 					$pkt.= $ipv6_hdr['dst_ip'];
 					$payload_pack = pack('nnnna*', $udp_hdr['src_port'],$udp_hdr['dst_port'], $udp_hdr['length'], $udp_hdr['checksum'], $data);
 					$pkt.= $payload_pack;
-					
+
 				} else {
 					//Ethernet + IP + UDP
 					$size['total'] = $size['ethernet'] + $size['ip'] + $size['udp'] + $size['data'];
@@ -2501,7 +2501,7 @@ class Search {
 		$fileid .= $result['callid'];
 		$pcapfile = "HOMER5_$fileid";
 		$pcapfile .= $text ? ".txt" : ".pcap";
-	
+
 		return array($pcapfile, strlen($buf), $buf);
 	}
 
@@ -2515,14 +2515,14 @@ class Search {
 		$layer = $this->getContainer('layer');
 		$uid = $_SESSION['uid'];
 		$data['timestamp'] = $timestamp;
-		$data['param'] = $param; 
+		$data['param'] = $param;
 		$uuid = sprintf('%04x%04x-%04x-%04x-%04x-%04x%04x%04x', mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
 				mt_rand( 0, 0xffff ), mt_rand( 0, 0x0fff ) | 0x4000, mt_rand( 0, 0x3fff ) | 0x8000,
 				mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ));
 		$json = json_encode($data, true);
-		
+
 		$expire = $layer->getExpire("CURDATE()","+", "14","DAY");
-		
+
 		$query = "INSERT INTO link_share (uid, uuid, data, expire) values ('?','?','?',".$expire.");";
 		$query = $db->makeQuery($query, $uid, $uuid, $json );
 		$db->executeQuery($query);
@@ -2605,14 +2605,14 @@ class Search {
 			}
 			elseif (isset($alias_cache[$data[$i]['source_ip'].'-'.$data[$i]['node']])) {
 				$data[$i]['source_alias'] = $alias_cache[$data[$i]['source_ip'].'-'.$data[$i]['node'].':'];
-			} 
+			}
 			elseif (isset($alias_cache[$data[$i]['source_ip']])) {
 				$data[$i]['source_alias'] = $alias_cache[$data[$i]['source_ip']];
 			}
 			else {
 				$data[$i]['source_alias'] = $data[$i]['source_ip'];
 			}
-			
+
 			// Apply destination_alias
 			if (isset($alias_cache[$data[$i]['destination_ip'].':'.$data[$i]['destination_port'].'-'.$data[$i]['node']])) {
 				$data[$i]['destination_alias'] = $alias_cache[$data[$i]['destination_ip'].':'.$data[$i]['destination_port'].'-'.$data[$i]['node']];
@@ -2622,7 +2622,7 @@ class Search {
 			}
 			elseif (isset($alias_cache[$data[$i]['destination_ip'].'-'.$data[$i]['node']])) {
 				$data[$i]['destination_alias'] = $alias_cache[$data[$i]['destination_ip'].'-'.$data[$i]['node'].':'];
-			} 
+			}
 			elseif (isset($alias_cache[$data[$i]['destination_ip']])) {
 				$data[$i]['destination_alias'] = $alias_cache[$data[$i]['destination_ip']];
 			}
@@ -2631,7 +2631,7 @@ class Search {
 			}
 		}
 	}
-	
+
 	private function applyHostsAliases(&$data) {
 		// Load alias cache
 		$db = $this->getContainer('db');
@@ -2730,7 +2730,7 @@ class Search {
 			$newhosts[$alias]['is_stp'] = (int) $is_stp;
 			$newhosts[$alias]['hosts'][] = array($key => $value);
 		}
-		
+
 		return $newhosts;
 	}
 
@@ -2763,10 +2763,10 @@ class Search {
 	function decodeIsupPart($body) {
 		$len = strlen ( $body );
 		$isup_readable = '';
-		
+
 		for($j = 0; $j < $len; $j ++)
 			$isup_readable .= sprintf ( "%02X ", ord ( $body [$j] ) );
-			
+
 			/* PCAP */
 		$pcap_file = '/tmp/' . uniqid () . '.pcap';
 		$fd = fopen ( $pcap_file, 'wb' );
@@ -2802,16 +2802,16 @@ class Search {
 				'78',
 				'D4',
 				'03',
-				'00' 
+				'00'
 		);
-		
+
 		while ( list ( $hpk, $hpv ) = each ( $pcap_headers_1 ) ) {
 			fwrite ( $fd, chr ( hexdec ( $hpv ) ) );
 		}
-		
+
 		$pcap_len = chr ( $len + 10 ) . chr ( 0 ) . chr ( 0 ) . chr ( 0 );
 		fwrite ( $fd, $pcap_len . $pcap_len );
-		
+
 		$pcap_headers_2 = array (
 				'DF',
 				'A5',
@@ -2822,22 +2822,22 @@ class Search {
 				'0d',
 				'33',
 				'03',
-				'00' 
+				'00'
 		);
 		while ( list ( $hpk, $hpv ) = each ( $pcap_headers_2 ) ) {
 			fwrite ( $fd, chr ( hexdec ( $hpv ) ) );
 		}
 		fwrite ( $fd, $res ['body'] );
 		fclose ( $fd );
-		
+
 		/* tskark */
 		$command = TSHARK_PATH.' -V -r ' . $pcap_file . ' -O isup | '.EGREP.' \'^\s(.*)\'';
 		$output = exec ( $command, $arr_output );
-		
+
 		$pcap_message = "\n\nfile: " . $pcap_file . "\n\n";
 		$pcap_message .= implode ( "\r\n", $arr_output );
 		$pcap_message .= "\n\n";
-		
+
 	}
 
 	private function getMultipartMessage($msg,$content_type) {
@@ -2847,7 +2847,7 @@ class Search {
 		$retour['headers'] = trim($matches [0]);
 		$retour['boundary'] = $boundary;
 		$mime_parts = array();
-		
+
 		while ( list ( $key, $val ) = each ( $matches ) ) {
 			if (preg_match ( '/^(Content\-Type: )(.*)/i', $val, $m )) {
 				$mime_parts[] = $this->getMultipart($val);
@@ -2855,7 +2855,7 @@ class Search {
 		}
 		$retour['mime_parts'] = $mime_parts;
 		return $retour;
-		
+
 	}
 
 	private function getMultipart($part) {
@@ -2865,23 +2865,23 @@ class Search {
 			'header' => '',
 			'body' => ''
 		);
-		
+
 		$res ['header'] = $lines [0];
 		$res ['body'] = substr ( $lines [1], 0, - 2 );
-		
+
 		return $res;
 	}
-	
+
 	private function getBoundaryName($content_type) {
 		preg_match('/boundary\=(.*)/',$content_type,$matches);
 		return trim($matches[1],"\x00,\x09,\x0A,\x0B,\x0D,\x20,\x22");
 	}
-	
+
 	private function decodeIsupData($isup,$type) {
 		$retour = null;
 		$len = strlen($isup);
 		$isup_method_name = array('01' => 'IAM','02' => 'SAM','03' => 'INR','04' => 'INF','06' => 'ACM','07' => 'CON','08' => 'FOT','09' => 'ANM','10' => 'RLC','12' => 'RSC','13' => 'BLO','14' => 'UBL','15' => 'BLA','16' => 'UBA','17' => 'GRS','18' => 'CGB','19' => 'CGU','20' => 'FAA','21' => 'FRJ','27' => 'DRS','28' => 'PAM','29' => 'GRA','30' => 'OLM','31' => 'CRG','32' => 'NRM','33' => 'FAC','34' => 'UPT','35' => 'UPA','36' => 'IDR','37' => 'IRS','38' => 'SGM','40' => 'LOP','41' => 'APM','42' => 'PRI','49' => 'CMC','0C' => 'REL','0D' => 'SUS','0E' => 'RES','1A' => 'CGBA','1B' => 'CGUA','1F' => 'FAR','2A' => 'CQM','2B' => 'CQR','2C' => 'CPG','2D' => 'USR','2E' => 'UCIC','2F' => 'CFN','4A' => 'CMRJ','4B' => 'CMR','E9' => 'CRA','EA' => 'CRM','EB' => 'CVR','EC' => 'CVT','ED' => 'EXM','FC' => 'CCL','FD' => 'MPM','FE' => 'OPR');
-		
+
 		switch($type){
 			case 'isup_decode':
 				$pcap_file = '/tmp/'.uniqid().'.pcap';
@@ -2890,10 +2890,10 @@ class Search {
 				while(list($hpk,$hpv)=each($pcap_headers_1)){
 					fwrite($fd,chr(hexdec($hpv)));
 				}
-					
+
 				$pcap_len = chr($len+10).chr(0).chr(0).chr(0);
 				fwrite($fd,$pcap_len.$pcap_len);
-				
+
 				$pcap_headers_2 = array('DF','A5','3A','85','df','cd','0d','33','03','00');
 				while(list($hpk,$hpv)=each($pcap_headers_2)){
 					fwrite($fd,chr(hexdec($hpv)));
@@ -2904,21 +2904,21 @@ class Search {
 				$command = TSHARK_PATH.' -V -r ' . $pcap_file . ' -O isup | '.EGREP.' \'^\s(.*)\'';
 				$output = exec($command,$arr_output);
 				array_shift($arr_output);
-			
+
 				$retour = array(
 					'file' => $pcap_file,
 					'content' => implode("\r\n",$arr_output)
 				);
 			break;
-			
+
 			case 'hex_decode':
 				for ($j = 0; $j < $len; $j++)
 					$retour .= sprintf("%02X ", ord($isup[$j]));
 			break;
-			
+
 			case 'method_name':
 				$hex_method = sprintf("%02X",ord( $isup[0] ));
-				
+
 				if(isset($isup_method_name[$hex_method]))
 					$retour = $isup_method_name[$hex_method];
 			break;
