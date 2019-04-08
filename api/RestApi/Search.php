@@ -1337,6 +1337,49 @@ class Search {
 					if($trans[$query_type]) {
 						if($limit < 1) break;
 						$layerHelper['values'] = array();
+						$layerHelper['values'][] = "correlation_id, callid, callid_aleg";
+						if($query_type == 'isup') {
+							$layerHelper['table']['base'] = "isup_capture";
+							$layerHelper['table']['type'] = "all";
+							$layerHelper['where']['param'] = $isup_callwhere;
+						}
+						else if($query_type == 'webrtc') {
+							$layerHelper['table']['base'] = "webrtc_capture";
+							$layerHelper['table']['type'] = "all";
+							$layerHelper['where']['param'] = $webrtc_callwhere;
+						}
+						else {
+							$layerHelper['table']['base'] = "sip_capture";
+							$layerHelper['table']['type'] = $query_type;
+							$layerHelper['where']['param'] = $callwhere;
+						}
+						$layerHelper['values'][] = "'".$query_type."' as trans";
+						$layerHelper['values'][] = "'".$node['name']."' as dbnode";
+						$layerHelper['table']['timestamp'] = $tkey;
+						$layerHelper['order']['limit'] = $limit;
+						$query = $layer->querySearchData($layerHelper);
+						$noderows = $db->loadObjectArray($query);
+						foreach($noderows as $row) {
+							$correlationids[] = $row['correlation_id'];
+							$correlationids[] = $row['callid'];
+							$correlationids[] = $row['callid_aleg'];
+						}
+					}
+				}
+			}
+		}
+		$search['callid'] = implode(";", array_filter(array_unique($correlationids)));
+		$callwhere = generateWhere($search, $and_or, $db, $b2b);
+
+		foreach($nodes as $node) {
+			$db->dbconnect_node($node);
+			$limit = $limit_orig;
+			$ts = $time['from_ts'];
+			foreach($timearray as $tkey=>$tval) {
+				foreach($this->query_types as $query_type) {
+					if($trans[$query_type]) {
+						if($limit < 1) break;
+						$layerHelper['values'] = array();
 						if($query_type == 'isup') {
 							$layerHelper['table']['base'] = "isup_capture";
 							$layerHelper['table']['type'] = "all";
