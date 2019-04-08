@@ -638,17 +638,16 @@ class Report {
 				}
 				else $dataArray[$m] = $d;
 			}
-			//$src_ip = $data[$key]["source_ip"];
-			//$dst_ip = $data[$key]["destination_ip"];
+
 			/* exit */
 			if(!array_key_exists("LocalAddr", $dataArray) && !array_key_exists("RemoteAddr", $dataArray)) {
 				break;
 			}
 
-			$src_ip = $dataArray["LocalAddr"];
-			$dst_ip =  $dataArray["RemoteAddr"];
+			$src_ip = $dataArray["LocalAddr"]["IP"];
+			$dst_ip = $dataArray["RemoteAddr"]["IP"];
 
-			$ipkey= "RTCPXR ".$src_ip." -> ".$dst_ip;
+			$ipkey= "RTCPXR[".$dataArray["RemoteAddr"]["SSRC"]."] ".$src_ip." -> ".$dst_ip;
 
 			if(!array_key_exists($ipkey,  $chartData)) $chartData[$ipkey] = array();
 
