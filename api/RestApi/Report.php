@@ -962,8 +962,6 @@ class Report {
 		$layerHelper['where']['param'] = $callwhere;
 		$layerHelper['time'] = $time;
 		$layerHelper['fields']['msg'] = true;
-		$layerHelper['order']['by'] = "id";
-		$layerHelper['order']['type'] = "DESC";
 		foreach($nodes as $node) {
 			$db->dbconnect_node($node);
 			$limit = $limit_orig;
