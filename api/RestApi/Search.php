@@ -2696,16 +2696,16 @@ class Search {
 				}
 				else {
 					$alias_cache[$alias['ip'].':'.$alias['port']] = $alias['alias'];
-					$stp_cache[$alias['ip']] = $alias['is_stp'];
+					$stp_cache[$alias['ip'].':'.$alias['port']] = $alias['is_stp'];
 				}
 			}
 			else if($alias['port'] == "0") {
 				$alias_cache[$alias['ip'].'-'.$alias['capture_id']] = $alias['alias'];
-				$stp_cache[$alias['ip']] = $alias['is_stp'];
+				$stp_cache[$alias['ip'].'-'.$alias['capture_id']] = $alias['is_stp'];
 			}
 			else {
 				$alias_cache[$alias['ip'].':'.$alias['port'].'-'.$alias['capture_id']] = $alias['alias'];
-				$stp_cache[$alias['ip']] = $alias['is_stp'];
+				$stp_cache[$alias['ip'].':'.$alias['port'].'-'.$alias['capture_id']] = $alias['is_stp'];
 			}
 		}
 		$newhosts = array();
