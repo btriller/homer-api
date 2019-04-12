@@ -484,6 +484,7 @@ class Report {
 				$statsData[$ipkey]["jitter_max"] = 0;
 				$statsData[$ipkey]["jitter_avg"] = 0;
 				$statsData[$ipkey]["delay"] = 0;
+				$statsData[$ipkey]["packets_lost"] = 0;
 			}
 
 			$lastlost = array();
@@ -516,6 +517,14 @@ class Report {
 				}
 			}
 		}
+
+		$mainData["mos_counter"] = 0;
+		$mainData["mos_average"] = 0;
+		$mainData["jitter_avg"] = 0;
+		$mainData["jitter_max"] = 0;
+		$mainData["packets_lost"] = 0;
+		$mainData["packets_sent"] = 0;
+		$mainData["packets_recv"] = 0;
 
 		foreach($chartData as $key=>$value) {
 			if($statsData[$key]["mos_average"] > 0) {

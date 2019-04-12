@@ -531,15 +531,6 @@ class Search {
 			usort($data, create_function('$a, $b', 'return $a["micro_ts"] > $b["micro_ts"] ? 1 : -1;'));
 		}
 
-		/* workaround for umlauts */
-        	foreach($data as $key=>$row) {
-            		$row['msg'] = preg_replace('/[öüäÖÄÜß]/i', '', $row['msg']);
-            		$data[$key]['msg'] = utf8_decode($row["msg"]);
-
-			$row['reply_reason'] = preg_replace('/[öüäÖÄÜß]/i', '', $row['reply_reason']);
-			$data[$key]['reply_reason'] = utf8_decode($row["reply_reason"]);
-        	}
-
 		if(SYSLOG_ENABLE == 1) closelog();
 
 		return $data;
