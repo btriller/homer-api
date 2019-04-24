@@ -963,6 +963,7 @@ class Report {
 
 		$layerHelper = array();
 		$layerHelper['table'] = array();
+		$layerHelper['index_hint'] = array();
 		$layerHelper['order'] = array();
 		$layerHelper['where'] = array();
 		$layerHelper['fields'] = array();
@@ -971,6 +972,8 @@ class Report {
 		$layerHelper['where']['param'] = $callwhere;
 		$layerHelper['time'] = $time;
 		$layerHelper['fields']['msg'] = true;
+		$layerHelper['index_hint'][] = "callid";
+		$layerHelper['index_hint'][] = "callid_aleg";
 		foreach($nodes as $node) {
 			$db->dbconnect_node($node);
 			$limit = $limit_orig;

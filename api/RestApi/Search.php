@@ -1318,6 +1318,8 @@ class Search {
 		$layerHelper['where']['type'] = $and_or ? "OR" : "AND";
 		$layerHelper['fields']['msg'] = true;
 		if($uniq) $layerHelper['fields']['md5msg'] = true;
+		$layerHelper['index_hint'][] = "callid";
+		$layerHelper['index_hint'][] = "callid_aleg";
 
 		foreach($nodes as $node) {
 			$db->dbconnect_node($node);

@@ -90,6 +90,10 @@ class mysql {
                 $values = implode(",", $layerHelper['values']);
                 
                 $query  = "SELECT ".$values. " FROM ".$table." ";
+
+                if(isset($layerHelper['index_hint'])) {
+                        $query .= " USE KEY (" .implode(",", $layerHelper['index_hint']).") ";
+		}
                 
                 if(isset($layerHelper['time']))
                 {
