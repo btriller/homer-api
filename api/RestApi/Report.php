@@ -412,8 +412,46 @@ class Report {
 			foreach($lnodes as $lnd) $nodes[] = $this->getNode($lnd['name']);
 		}
 		$timearray = $this->getTimeArray($time['from_ts'], $time['to_ts']);
-		$search['correlation_id'] = implode(";", $callids);
 
+		$layerHelper = array();
+		$layerHelper['table'] = array();
+		$layerHelper['order'] = array();
+		$layerHelper['where'] = array();
+		$layerHelper['fields'] = array();
+		$layerHelper['time'] = $time;
+		$layerHelper['where']['type'] = $and_or ? "OR" : "AND";
+		$layerHelper['index_hint'][] = "callid";
+		$layerHelper['index_hint'][] = "callid_aleg";
+		$correlation_id_search['callid'] = implode(";", $callids);
+		$callwhere = generateWhere($correlation_id_search, $and_or, $db, 1);
+
+		foreach($nodes as $node) {
+			$db->dbconnect_node($node);
+			$limit = $limit_orig;
+			$ts = $time['from_ts'];
+			foreach($timearray as $tkey=>$tval) {
+				if($limit < 1) break;
+				$layerHelper['values'] = array();
+				$layerHelper['values'][] = "correlation_id, callid, callid_aleg";
+				$layerHelper['table']['base'] = "sip_capture";
+				$layerHelper['table']['type'] = 'call';
+				$layerHelper['where']['param'] = $callwhere;
+				//$layerHelper['values'][] = "'".$query_type."' as trans";
+				$layerHelper['values'][] = "'".$node['name']."' as dbnode";
+				$layerHelper['table']['timestamp'] = $tkey;
+				$layerHelper['order']['limit'] = $limit;
+				$query = $layer->querySearchData($layerHelper);
+				if(SYSLOG_ENABLE == 1) syslog(LOG_WARNING,"get correlation id query: ".$query);
+				$noderows = $db->loadObjectArray($query);
+				foreach($noderows as $row) {
+					$correlationids[] = $row['correlation_id'];
+					$correlationids[] = $row['callid'];
+					$correlationids[] = $row['callid_aleg'];
+				}
+			}
+		}
+
+		$search['correlation_id'] = implode(";", array_filter(array_unique($correlationids)));
 		$callwhere = generateWhere($search, $and_or, $db, 0);
 		$layerHelper = array();
 		$layerHelper['table'] = array();
