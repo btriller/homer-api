@@ -193,4 +193,3 @@ Server::create(WEBROOT.'api/v1', 'RestApi\Auth') //base entry points `/admin`
 
 ->run();
 
-?>

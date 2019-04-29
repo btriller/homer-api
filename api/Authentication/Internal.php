@@ -309,4 +309,3 @@ class Internal extends Authentication {
 	}
 }
 
-?>

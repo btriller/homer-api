@@ -35,4 +35,3 @@ include_once("preferences.php");
 
 endif;
 
-?>

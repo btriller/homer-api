@@ -236,4 +236,3 @@ class PDOConnector extends DefaultConnector {
 	}
 }
 
-?>

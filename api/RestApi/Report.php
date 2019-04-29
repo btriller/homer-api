@@ -2005,4 +2005,3 @@ class Report {
 		return $timearray;
 	}
 }
-?>

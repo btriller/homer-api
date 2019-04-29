@@ -2968,4 +2968,3 @@ class Search {
 		return $retour;
 	}
 }
-?>

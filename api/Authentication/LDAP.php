@@ -188,4 +188,3 @@ class LDAP extends Authentication {
     }
 }
 
-?>
