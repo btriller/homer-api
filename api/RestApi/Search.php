@@ -2400,30 +2400,30 @@ class Search {
 		if(!count($results)) return array();
 		/* GENERATE PCAP */
 		$size = array(
-			ethernet=>14,
-			ip => 20,
-			ip6 => 40,
-			udp => 8,
-			tcp => 20,
-			data => 0,
-			total => 0
+			'ethernet' =>14,
+			'ip' => 20,
+			'ip6' => 40,
+			'udp' => 8,
+			'tcp' => 20,
+			'data' => 0,
+			'total' => 0
 		);
 
 		//Write PCAP HEADER
 		$pcaphdr = array(
-			magic => 2712847316,
-			version_major => 2,
-			version_minor => 4,
-			thiszone => 0,
-			sigfigs => 0,
-			snaplen => 102400,
-			network => 1
+			'magic' => 2712847316,
+			'version_major' => 2,
+			'version_minor' => 4,
+			'thiszone' => 0,
+			'sigfigs' => 0,
+			'snaplen' => 102400,
+			'network' => 1
 		);
 
 		$buf="";
 		$pcap_packet = pack("lssllll", $pcaphdr['magic'], $pcaphdr['version_major'], $pcaphdr['version_minor'], $pcaphdr['thiszone'], $pcaphdr['sigfigs'], $pcaphdr['snaplen'], $pcaphdr['network']);
 		//Ethernet header
-		$eth_hdr = array( dest_mac => "020202020202", src_mac => "010101010101", type => "0800");
+		$eth_hdr = array('dest_mac' => "020202020202", 'src_mac' => "010101010101", 'type' => "0800");
 		$ethernet = pack("H12H12H4", $eth_hdr['dest_mac'], $eth_hdr['src_mac'], $eth_hdr['type']);
 		if(!$text) $buf=$pcap_packet;
 
