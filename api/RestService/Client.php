@@ -367,60 +367,8 @@ class Client
      */
     public function jsonFormat($json)
     {
-        if (!is_string($json)) $json = json_encode($json);
-
-        $result      = '';
-        $pos         = 0;
-        $strLen      = strlen($json);
-        $indentStr   = '    ';
-        $newLine     = "\n";
-        $inEscapeMode = false; //if the last char is a valid \ char.
-        $outOfQuotes = true;
-
-        for ($i=0; $i<=$strLen; $i++) {
-
-            // Grab the next character in the string.
-            $char = substr($json, $i, 1);
-
-            // Are we inside a quoted string?
-            if ($char == '"' && !$inEscapeMode) {
-                $outOfQuotes = !$outOfQuotes;
-
-                // If this character is the end of an element,
-                // output a new line and indent the next line.
-            } elseif (($char == '}' || $char == ']') && $outOfQuotes) {
-                $result .= $newLine;
-                $pos --;
-                for ($j=0; $j<$pos; $j++) {
-                    $result .= $indentStr;
-                }
-            } elseif ($char == ':' && $outOfQuotes) {
-                $char .= ' ';
-            }
-
-            // Add the character to the result string.
-            $result .= $char;
-
-            // If the last character was the beginning of an element,
-            // output a new line and indent the next line.
-            if (($char == ',' || $char == '{' || $char == '[') && $outOfQuotes) {
-                $result .= $newLine;
-                if ($char == '{' || $char == '[') {
-                    $pos ++;
-                }
-
-                for ($j = 0; $j < $pos; $j++) {
-                    $result .= $indentStr;
-                }
-            }
-
-            if ($char == '\\' && !$inEscapeMode)
-                $inEscapeMode = true;
-            else
-                $inEscapeMode = false;
-        }
-
-        return $result;
+        if (is_string($json)) $json = json_decode($json);
+        return json_encode($json, JSON_PRETTY_PRINT);
     }
 
     /**
