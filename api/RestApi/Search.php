@@ -2536,8 +2536,8 @@ class Search {
 						$ipv4_hdr['fl_fr'], $ipv4_hdr['ttl'],$ipv4_hdr['proto'],$ipv4_hdr['checksum'], $ipv4_hdr['src_ip'], $ipv4_hdr['dst_ip'],
 						$udp_hdr['src_port'],$udp_hdr['dst_port'], $udp_hdr['length'], $udp_hdr['checksum'], $data);
 				}
+				$buf.=$pkt;
 			}
-			$buf.=$pkt;
 		}
 		$fileid = "sip_";
 		$fileid .= $result['callid'];
