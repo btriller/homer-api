@@ -1313,7 +1313,7 @@ class Search {
 					if($trans[$query_type]) {
 						if($limit < 1) break;
 						$layerHelper['values'] = array();
-						$layerHelper['values'][] = "correlation_id, callid, callid_aleg";
+						$layerHelper['values'][] = "callid, callid_aleg";
 						if($query_type == 'isup') {
 							$layerHelper['table']['base'] = "isup_capture";
 							$layerHelper['table']['type'] = "all";
@@ -1336,7 +1336,6 @@ class Search {
 						$query = $layer->querySearchData($layerHelper);
 						$noderows = $db->loadObjectArray($query);
 						foreach($noderows as $row) {
-							$correlationids[] = $row['correlation_id'];
 							$correlationids[] = $row['callid'];
 							$correlationids[] = $row['callid_aleg'];
 						}

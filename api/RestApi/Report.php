@@ -432,7 +432,7 @@ class Report {
 			foreach($timearray as $tkey=>$tval) {
 				if($limit < 1) break;
 				$layerHelper['values'] = array();
-				$layerHelper['values'][] = "correlation_id, callid, callid_aleg";
+				$layerHelper['values'][] = "callid, callid_aleg";
 				$layerHelper['table']['base'] = "sip_capture";
 				$layerHelper['table']['type'] = 'call';
 				$layerHelper['where']['param'] = $callwhere;
@@ -444,7 +444,6 @@ class Report {
 				if(SYSLOG_ENABLE == 1) syslog(LOG_WARNING,"get correlation id query: ".$query);
 				$noderows = $db->loadObjectArray($query);
 				foreach($noderows as $row) {
-					$correlationids[] = $row['correlation_id'];
 					$correlationids[] = $row['callid'];
 					$correlationids[] = $row['callid_aleg'];
 				}
