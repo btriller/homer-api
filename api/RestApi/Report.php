@@ -181,7 +181,7 @@ class Report {
 		}
 
 		/* sorting */
-		usort($data, create_function('$a, $b', 'return $a["micro_ts"] > $b["micro_ts"] ? 1 : -1;'));
+		usort($data, create_function('$a, $b', 'return $a["micro_ts"] - $b["micro_ts"];'));
 		if(empty($data)) {
 			$answer['sid'] = session_id();
 			$answer['auth'] = 'true';
@@ -481,7 +481,7 @@ class Report {
 			$limit -= count($noderows);
 		}
 		/* sorting */
-		usort($data, create_function('$a, $b', 'return $a["micro_ts"] > $b["micro_ts"] ? 1 : -1;'));
+		usort($data, create_function('$a, $b', 'return $a["micro_ts"] - $b["micro_ts"];'));
 
 		$chartData = array();
 		$mainData = array();
@@ -660,7 +660,7 @@ class Report {
 			$limit -= count($noderows);
 		}
 		/* sorting */
-		usort($data, create_function('$a, $b', 'return $a["micro_ts"] > $b["micro_ts"] ? 1 : -1;'));
+		usort($data, create_function('$a, $b', 'return $a["micro_ts"] - $b["micro_ts"];'));
 
 		$chartData = array();
 		$mainData = array();
@@ -824,7 +824,7 @@ class Report {
 			$limit -= count($noderows);
 		}
 		/* sorting */
-		usort($data, create_function('$a, $b', 'return $a["micro_ts"] > $b["micro_ts"] ? 1 : -1;'));
+		usort($data, create_function('$a, $b', 'return $a["micro_ts"] - $b["micro_ts"];'));
 
 		$chartData = array();
 		$mainData = array();
@@ -1040,7 +1040,7 @@ class Report {
 			}
 		}
 		/* sorting */
-		usort($data, create_function('$a, $b', 'return $a["micro_ts"] > $b["micro_ts"] ? 1 : -1;'));
+		usort($data, create_function('$a, $b', 'return $a["micro_ts"] - $b["micro_ts"];'));
 		$startTime = intval($data[0]["micro_ts"]/1000);
 		$endTime = intval($data[count($data)-1]["micro_ts"]/1000);
 		$duration = ($endTime - $startTime);
@@ -1520,7 +1520,7 @@ class Report {
 			$limit -= count($noderows);
 		}
 		/* sorting */
-		usort($data, create_function('$a, $b', 'return $a["micro_ts"] > $b["micro_ts"] ? 1 : -1;'));
+		usort($data, create_function('$a, $b', 'return $a["micro_ts"] - $b["micro_ts"];'));
 
 		if(empty($data)) {
 			$answer['sid'] = session_id();
@@ -1718,7 +1718,7 @@ class Report {
 			$limit -= count($noderows);
 		}
 		/* sorting */
-		usort($data, create_function('$a, $b', 'return $a["micro_ts"] > $b["micro_ts"] ? 1 : -1;'));
+		usort($data, create_function('$a, $b', 'return $a["micro_ts"] - $b["micro_ts"];'));
 		$allowreport = array("LocalAddr", "RemoteAddr", "PacketLoss", "Delay", "QualityEst");
 		foreach($data as $key=>$row) {
 			if($row['type'] == 1 && $id != "raw") {

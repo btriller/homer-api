@@ -290,7 +290,7 @@ class Search {
 			}
 		}
 		/* sorting */
-		usort($data, create_function('$a, $b', 'return $a["micro_ts"] > $b["micro_ts"] ? 1 : -1;'));
+		usort($data, create_function('$a, $b', 'return $a["micro_ts"] - $b["micro_ts"];'));
 		$answer = array();
 		if(empty($data)) {
 			$answer['sid'] = session_id();
@@ -528,7 +528,7 @@ class Search {
 		}
 		else {
 			/* sorting */
-			usort($data, create_function('$a, $b', 'return $a["micro_ts"] > $b["micro_ts"] ? 1 : -1;'));
+			usort($data, create_function('$a, $b', 'return $a["micro_ts"] - $b["micro_ts"];'));
 		}
 
 		if(SYSLOG_ENABLE == 1) closelog();
@@ -1159,7 +1159,7 @@ class Search {
 		/* apply aliases */
 		$this->applyAliases($data);
 		/* sorting */
-		usort($data, create_function('$a, $b', 'return $a["micro_ts"] > $b["micro_ts"] ? 1 : -1;'));
+		usort($data, create_function('$a, $b', 'return $a["micro_ts"] - $b["micro_ts"];'));
 		$answer = array();
 		if(empty($data)) {
 			$answer['sid'] = session_id();
@@ -1398,7 +1398,7 @@ class Search {
 		}
 
 		/* sorting */
-		usort($data, create_function('$a, $b', 'return $a["micro_ts"] > $b["micro_ts"] ? 1 : -1;'));
+		usort($data, create_function('$a, $b', 'return $a["micro_ts"] - $b["micro_ts"];'));
 		return $data;
 	}
 
@@ -1503,7 +1503,7 @@ class Search {
 			$limit -= count($noderows);
 		}
 		/* sorting */
-		usort($data, create_function('$a, $b', 'return $a["micro_ts"] > $b["micro_ts"] ? 1 : -1;'));
+		usort($data, create_function('$a, $b', 'return $a["micro_ts"] - $b["micro_ts"];'));
 
 		if(empty($data)) {
 			$answer['sid'] = session_id();
@@ -1557,7 +1557,7 @@ class Search {
 
 		//print_r($data);
 		//exit;
-		usort($localdata, create_function('$a, $b', 'return $a["micro_ts"] > $b["micro_ts"] ? 1 : -1;'));
+		usort($localdata, create_function('$a, $b', 'return $a["micro_ts"] - $b["micro_ts"];'));
 
 		if(!$max_ts) {
 			$max_ts_tmp = end($data);
