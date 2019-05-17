@@ -461,16 +461,16 @@ class Report {
 		$layerHelper['where']['type'] = $and_or ? "OR" : "AND";
 		$layerHelper['where']['param'] = $callwhere;
 		$layerHelper['time'] = $time;
+		unset($layerHelper['order']['limit']);
+
 		foreach($nodes as $node) {
 			$db->dbconnect_node($node);
-			$limit = $limit_orig;
-			if (defined('RTCP_TABLE_PARTITION') && RTCP_TABLE_PARTITION == 1){
+			if (defined('RTCP_TABLE_PARTITION') && RTCP_TABLE_PARTITION == 1) {
 				foreach($timearray as $tkey=>$tval) {
 					$layerHelper['table']['type'] = "all";
 					$layerHelper['table']['timestamp'] = $tkey;
 				}
 			}
-			$layerHelper['order']['limit'] = $limit;
 			$layerHelper['values'] = array();
 			$layerHelper['values'][] = "*";
 			$layerHelper['values'][] = "'".$node['name']."' as dbnode";
