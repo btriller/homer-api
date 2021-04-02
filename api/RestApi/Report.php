@@ -216,6 +216,18 @@ class Report {
 		$lnodes = array();
 		$newcorrid = array();
 
+		$trans['call'] = getVar('call', false, $param['transaction'], 'bool');
+
+		if(!$trans['call']) {
+			$answer['sid'] = session_id();
+			$answer['auth'] = 'true';
+			$answer['status'] = 200;
+			$answer['message'] = 'no data';
+			$answer['data'] = $data;
+			$answer['count'] = count($data);
+			return $answer;
+		}
+
 		if(isset($param['location'])) $lnodes = $param['location']['node'];
 		$time['from'] = getVar('from', round((microtime(true) - 300) * 1000), $timestamp, 'long');
 		$time['to'] = getVar('to', round(microtime(true) * 1000), $timestamp, 'long');
