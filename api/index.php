@@ -38,10 +38,20 @@ ini_set('date.timezone', HOMER_TIMEZONE);
 /* if defined session_name, set this */
 if(defined('SESSION_NAME')) session_name(SESSION_NAME);
 
+$cookie_params = [
+	'path' => '/',
+	'domain' => $_SERVER['HTTP_HOST'],
+	'secure' => true,
+	'httponly' => true,
+	'samesite' => 'strict'
+];
+
 if(defined('SESSION_TIME')) {
     ini_set('session.gc_maxlifetime', SESSION_TIME);
-    session_set_cookie_params(SESSION_TIME);
+    $cookie_params['lifetime'] = SESSION_TIME;
 }
+
+session_set_cookie_params($cookie_params);
 
 if(!defined('SHARE_MESSAGES')) define('SHARE_MESSAGES', 0);
 
