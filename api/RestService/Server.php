@@ -822,6 +822,9 @@ class Server
         if (is_array($regexArguments)) {
             $arguments = array_merge($arguments, $regexArguments);
         }
+        else {
+            $regexArguments = array();
+        }
 
         //open class and scan method
         if ($this->controller && is_string($callableMethod)) {

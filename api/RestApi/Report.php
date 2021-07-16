@@ -676,6 +676,10 @@ class Report {
 
 		$chartData = array();
 		$mainData = array();
+		$mainData["mos_counter"]  = 0;
+		$mainData["mos_average"]  = 0;
+		$mainData["jitter_avg"]   = 0;
+		$mainData["packets_lost"] = 0;
 		$statsData = array();
 		/* RTCP report fix */
 		foreach ($data as $key => $field) {
@@ -730,6 +734,7 @@ class Report {
 				$statsData[$ipkey]["jitter_max"] =  0;
 				$statsData[$ipkey]["jitter_avg"] =  0;
 				$statsData[$ipkey]["delay"] =  0;
+				$statsData[$ipkey]["packets_lost"] =  0;
 			}
 
 			$tmpMos = floatval($dataArray["QualityEst"]["MOSCQ"]);
@@ -742,7 +747,8 @@ class Report {
 			$statsData[$ipkey]["packets_lost"] += $tmpPacketLost;
 
 			if($tmpJitter > $statsData[$ipkey]["jitter_max"]) $statsData[$ipkey]["jitter_max"] = $tmpJitter;
-			if(!array_key_exists("mos_worst", $statsData[$ipkey]) || $statsData[$ipkey]["mos_worst"] > $tmpMos) $statsData[$ipkey]["mos_worst"] = $tmpMos;
+			if(!array_key_exists("mos_worst", $statsData[$ipkey]) || $statsData[$ipkey]["mos_worst"] > $tmpMos)
+				$statsData[$ipkey]["mos_worst"] = $tmpMos;
 			$chartData[$ipkey]["mos"][]= array($msts, $tmpMos);
 			$chartData[$ipkey]["jitter"][]=array($msts, $tmpJitter);
 			$chartData[$ipkey]["packets_lost"][] = array($msts, $tmpPacketLost);
@@ -757,9 +763,11 @@ class Report {
 			$mainData["mos_average"]  += $statsData[$key]["mos_average"];
 			$mainData["jitter_avg"]   += $statsData[$key]["jitter_avg"];
 			$mainData["packets_lost"] += $statsData[$key]["packets_lost"];
+
 			if(!array_key_exists("mos_worst", $mainData) || $statsData[$key]["mos_worst"] < $mainData["mos_worst"])
 				$mainData["mos_worst"] = $statsData[$key]["mos_worst"];
-			if($statsData[$key]["jitter_max"] > $mainData["jitter_max"]) $mainData["jitter_max"]= $statsData[$key]["jitter_max"];
+			if($statsData[$key]["jitter_max"] > $mainData["jitter_max"])
+				$mainData["jitter_max"]= $statsData[$key]["jitter_max"];
 		}
 
 		/* sum of report */

@@ -184,13 +184,13 @@ class Internal extends Authentication {
            $mydb = $this->getContainer('db');
            $mydb->select_db(DB_CONFIGURATION);
            $mydb->dbconnect();
-                                
+
            /* get our DB Abstract Layer */
            $layer = $this->getContainer('layer');
 
            $query  = $mydb->makeQuery("SELECT uid, gid, username, `grp`, firstname, lastname, email, lastvisit,department  FROM ".$layer->getTableName($this->user_table)." WHERE ".$this->id_column." = ? limit 1;", $_SESSION['loggedin']);
            $rows = $mydb->loadObjectList($query);
-           
+
            if(count($rows)) {
                 $row = $rows[0];
                 $user['uid']     = $row->uid;
@@ -202,7 +202,7 @@ class Internal extends Authentication {
                 $user['email']      = $row->email;
                 $user['lastvisit']  = $row->lastvisit;
                 $user['department']  = $row->department;
-                
+
                 return $user;
            }                                
            else return array();

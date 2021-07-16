@@ -2272,7 +2272,7 @@ class Search {
 		if(isset($param['timezone']) && isset($param['timezone']['value'])) {
 			$val = getVar('value', 0, $param['timezone'], 'long');
 			$offset = $val < -1 ? abs($val) : -$val;
-			$offset *=60;
+			$offset *= 60;
 		}
 		else $offset = date('Z');
 		list($pcapfile, $fsize, $buf) = $this->generateHomerTextPCAP($data, 1, $offset);
