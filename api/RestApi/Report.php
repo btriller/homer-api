@@ -242,7 +242,7 @@ class Report {
 		$proto = getVar('proto', -1, $param['search'], 'int');
 		$family = getVar('family', -1, $param['search'], 'int');
 		$and_or = getVar('orand', NULL, $param['search'], 'string');
-		$limit_orig = getVar('limit', 100, $param, 'int');
+		$limit_orig = getVar('limit', 100, $param['search'], 'int');
 		$answer = array();
 		$callids = getVar('callid', array(), $param['search'], 'array');
 		$callwhere = array();
@@ -313,6 +313,7 @@ class Report {
 				$layerHelper['order']['limit'] = $limit;
 				$query = $layer->querySearchData($layerHelper);
 				$noderows = $db->loadObjectArray($query);
+				if(SYSLOG_ENABLE == 1) syslog(LOG_WARNING,"get correlation id query: ".$query);
 
 				foreach($noderows as $k=>$d) {
 					$mapsCallid[$d["correlation_id"]]=$d["correlation_id"];
@@ -325,7 +326,7 @@ class Report {
 		$callids = $mapsCallid;
 
 		/* codecs */
-		list($export,$duration, $xrtpreport) =  $this->getCodecsFromMessagesForTransaction($timestamp, $param);
+		list($export, $duration, $xrtpreport) =  $this->getCodecsFromMessagesForTransaction($timestamp, $param);
 		$bigReport["global"] = $export;
 
 		$bigReport["reports"] = array();
@@ -416,7 +417,7 @@ class Report {
 		$proto = getVar('proto', -1, $param['search'], 'int');
 		$family = getVar('family', -1, $param['search'], 'int');
 		$and_or = getVar('orand', NULL, $param['search'], 'string');
-		$limit_orig = getVar('limit', 100, $param, 'int');
+		$limit_orig = getVar('limit', 100, $param['search'], 'int');
 		$callwhere = array();
 		$nodes = array();
 		if(SINGLE_NODE == 1) $nodes[] = array( "dbname" =>  DB_HOMER, "name" => "single");
@@ -631,7 +632,7 @@ class Report {
 		$proto = getVar('proto', -1, $param['search'], 'int');
 		$family = getVar('family', -1, $param['search'], 'int');
 		$and_or = getVar('orand', NULL, $param['search'], 'string');
-		$limit_orig = getVar('limit', 100, $param, 'int');
+		$limit_orig = getVar('limit', 100, $param['search'], 'int');
 		$callwhere = array();
 		$nodes = array();
 		if(SINGLE_NODE == 1) $nodes[] = array( "dbname" =>  DB_HOMER, "name" => "single");
@@ -668,6 +669,7 @@ class Report {
 			$layerHelper['values'][] = "'".$node['name']."' as dbnode";
 			$query = $layer->querySearchData($layerHelper);
 			$noderows = $db->loadObjectArray($query);
+			if(SYSLOG_ENABLE == 1) syslog(LOG_WARNING,"RTCP-XR Query: ".$query);
 			$data = array_merge($data,$noderows);
 			$limit -= count($noderows);
 		}

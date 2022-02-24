@@ -1218,7 +1218,7 @@ class Search {
 		$time['to_ts'] = round($time['to']/1000);
 
 		//workaround for BYE click
-		$time['from_ts'] -=600;
+		$time['from_ts'] -= 600;
 		$limit_orig = getVar('limit', 200, $param['search'], 'int');
 		if($limit_orig <= 0) $limit_orig = 200;
 		$record_id = getVar('id', 0, $param['search'], 'int');
@@ -1379,7 +1379,8 @@ class Search {
 						$layerHelper['order']['limit'] = $limit;
 						$query = $layer->querySearchData($layerHelper);
 						$noderows = $db->loadObjectArray($query);
-						if(SYSLOG_ENABLE == 1) syslog(LOG_WARNING,"get messages for transaction data: ".$query);
+						if(SYSLOG_ENABLE == 1)
+							syslog(LOG_WARNING,"get messages for transaction data: ".$query);
 						$data = array_merge($data,$noderows);
 						$limit -= count($noderows);
 					}
