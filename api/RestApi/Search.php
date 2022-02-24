@@ -1429,7 +1429,7 @@ class Search {
 		$proto = getVar('proto', -1, $param['search'], 'int');
 		$family = getVar('family', -1, $param['search'], 'int');
 		$and_or = getVar('orand', NULL, $param['search'], 'string');
-		$limit_orig = getVar('limit', 100, $param, 'int');
+		$limit_orig = getVar('limit', 100, $param['search'], 'int');
 		$callids = getVar('callid', array(), $param['search'], 'array');
 
 		$mapsCallid = array();
@@ -1486,7 +1486,7 @@ class Search {
 		$layerHelper['fields']['ts'][0]=array();
 		$layerHelper['fields']['ts'][0]['name'] = 'date';
 		$layerHelper['fields']['ts'][0]['alias'] = 'unixts';
-		$layerHelper['order']['limit'] = $limit;
+		$layerHelper['order']['limit'] = $limit_orig;
 
 		foreach($nodes as $node) {
 			$db->dbconnect_node($node);

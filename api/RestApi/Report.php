@@ -288,19 +288,23 @@ class Report {
 		}
 
 		$timearray = $this->getTimeArray($time['from_ts'], $time['to_ts']);
-		if(empty($callwhere)) $callwhere = generateWhere($search, $and_or, $db, 0);
+		if(empty($callwhere)) $callwhere = generateWhere($search, $and_or, $db, true);
 		$callwhere[]="correlation_id != ''";
+
 		$layerHelper = array();
 		$layerHelper['table'] = array();
 		$layerHelper['order'] = array();
 		$layerHelper['where'] = array();
 		$layerHelper['fields'] = array();
+		$layerHelper['index_hint'] = array();
+		$layerHelper['index_hint'][] = 'callid';
+		$layerHelper['index_hint'][] = 'callid_aleg';
 		$layerHelper['values'] = array();
+		$layerHelper['values'][] = 'distinct callid, callid_aleg';
 		$layerHelper['table']['base'] = "sip_capture";
 		$layerHelper['where']['type'] = $and_or ? "OR" : "AND";
 		$layerHelper['where']['param'] = $callwhere;
 		$layerHelper['time'] = $time;
-		$layerHelper['fields']['distinct'] = "correlation_id";
 
 		/* get all correlation_id */
 		foreach($nodes as $node) {
@@ -313,11 +317,15 @@ class Report {
 				$layerHelper['order']['limit'] = $limit;
 				$query = $layer->querySearchData($layerHelper);
 				$noderows = $db->loadObjectArray($query);
-				if(SYSLOG_ENABLE == 1) syslog(LOG_WARNING,"get correlation id query: ".$query);
+				if(SYSLOG_ENABLE == 1) syslog(LOG_WARNING,"doQOSReport: get correlation id query: ".$query);
 
 				foreach($noderows as $k=>$d) {
-					$mapsCallid[$d["correlation_id"]]=$d["correlation_id"];
-					$kz = substr($d["correlation_id"], 0, -1);
+					$mapsCallid[$d["callid"]]=$d["callid"];
+					$kz = substr($d["callid"], 0, -1);
+					$mapsCallid[$kz] = $kz;
+
+					$mapscallid_aleg[$d["callid_aleg"]]=$d["callid_aleg"];
+					$kz = substr($d["callid_aleg"], 0, -1);
 					$mapsCallid[$kz] = $kz;
 				}
 			}
@@ -438,32 +446,7 @@ class Report {
 		$correlation_id_search['callid'] = implode(";", $callids);
 		$callwhere = generateWhere($correlation_id_search, $and_or, $db, 1);
 
-		foreach($nodes as $node) {
-			$db->dbconnect_node($node);
-			$limit = $limit_orig;
-			$ts = $time['from_ts'];
-			foreach($timearray as $tkey=>$tval) {
-				if($limit < 1) break;
-				$layerHelper['values'] = array();
-				$layerHelper['values'][] = "callid, callid_aleg";
-				$layerHelper['table']['base'] = "sip_capture";
-				$layerHelper['table']['type'] = 'call';
-				$layerHelper['where']['param'] = $callwhere;
-				//$layerHelper['values'][] = "'".$query_type."' as trans";
-				$layerHelper['values'][] = "'".$node['name']."' as dbnode";
-				$layerHelper['table']['timestamp'] = $tkey;
-				$layerHelper['order']['limit'] = $limit;
-				$query = $layer->querySearchData($layerHelper);
-				if(SYSLOG_ENABLE == 1) syslog(LOG_WARNING,"get correlation id query: ".$query);
-				$noderows = $db->loadObjectArray($query);
-				foreach($noderows as $row) {
-					$correlationids[] = $row['callid'];
-					$correlationids[] = $row['callid_aleg'];
-				}
-			}
-		}
-
-		$search['correlation_id'] = implode(";", array_filter(array_unique($correlationids)));
+		$search['correlation_id'] = implode(";", $callids);
 		$callwhere = generateWhere($search, $and_or, $db, 0);
 		$layerHelper = array();
 		$layerHelper['table'] = array();
@@ -491,7 +474,6 @@ class Report {
 			$noderows = $db->loadObjectArray($query);
 			if(SYSLOG_ENABLE == 1) syslog(LOG_WARNING,"RTCP Query: ".$query);
 			$data = array_merge($data,$noderows);
-			$limit -= count($noderows);
 		}
 		/* sorting */
 		usort($data, create_function('$a, $b', 'return $a["micro_ts"] - $b["micro_ts"];'));
@@ -768,7 +750,7 @@ class Report {
 
 			if(!array_key_exists("mos_worst", $mainData) || $statsData[$key]["mos_worst"] < $mainData["mos_worst"])
 				$mainData["mos_worst"] = $statsData[$key]["mos_worst"];
-			if($statsData[$key]["jitter_max"] > $mainData["jitter_max"])
+			if(!array_key_exists("jitter_max", $mainData) || $statsData[$key]["jitter_max"] > $mainData["jitter_max"])
 				$mainData["jitter_max"]= $statsData[$key]["jitter_max"];
 		}
 
