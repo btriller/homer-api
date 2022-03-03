@@ -502,7 +502,7 @@ class Report {
 				//$json = $data[$key]["msg"];
 				$data[$key]["msg"] = json_decode(preg_replace( '/[^[:print:]]/', '',$json), true);
 			}
-			if (isset($data[$key]["msg"]["sdes_ssrc"])) {
+			if (array_key_exists("sdes_ssrc", $data[$key]["msg"])) {
 				$ssrc = $data[$key]["msg"]["sdes_ssrc"];
 			}
 			else {
