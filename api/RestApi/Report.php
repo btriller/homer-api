@@ -320,13 +320,17 @@ class Report {
 				if(SYSLOG_ENABLE == 1) syslog(LOG_WARNING,"doQOSReport: get correlation id query: ".$query);
 
 				foreach($noderows as $k=>$d) {
-					$mapsCallid[$d["callid"]]=$d["callid"];
-					$kz = substr($d["callid"], 0, -1);
-					$mapsCallid[$kz] = $kz;
+					if ($d["callid"] != '') {
+						$mapsCallid[$d["callid"]]=$d["callid"];
+						$kz = substr($d["callid"], 0, -1);
+						$mapsCallid[$kz] = $kz;
+					}
 
-					$mapscallid_aleg[$d["callid_aleg"]]=$d["callid_aleg"];
-					$kz = substr($d["callid_aleg"], 0, -1);
-					$mapsCallid[$kz] = $kz;
+					if ($d["callid_aleg"] != '') {
+						$mapscallid_aleg[$d["callid_aleg"]]=$d["callid_aleg"];
+						$kz = substr($d["callid_aleg"], 0, -1);
+						$mapsCallid[$kz] = $kz;
+					}
 				}
 			}
 		}
