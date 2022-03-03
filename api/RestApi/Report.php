@@ -502,7 +502,13 @@ class Report {
 				//$json = $data[$key]["msg"];
 				$data[$key]["msg"] = json_decode(preg_replace( '/[^[:print:]]/', '',$json), true);
 			}
-			$ipkey= "RTCP[".sprintf("0x%'08X", $data[$key]["msg"]["sdes_ssrc"])."] ". $src_ip." -> ".$dst_ip;
+			if (isset($data[$key]["msg"]["sdes_ssrc"])) {
+				$ssrc = $data[$key]["msg"]["sdes_ssrc"];
+			}
+			else {
+				$ssrc = $data[$key]["msg"]["ssrc"];
+			}
+			$ipkey= "RTCP[".sprintf("0x%'08X", $ssrc)."] ". $src_ip." -> ".$dst_ip;
 
 			if(!array_key_exists($ipkey,  $chartData)) $chartData[$ipkey] = array();
 
