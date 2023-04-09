@@ -695,13 +695,12 @@ class Report {
 					if($remote_metrics_block) continue;
 					if(preg_match("/=/", $d)) {
 						$dataArray[$m] = array();
-						$restars = explode(" ", $d);
+						$restars = explode(" ", trim($d));
 						foreach($restars as $v1) {
-							list($k2,$v2) = explode("=",$v1);
+							list($k2,$v2) = explode("=", $v1, 2);
 							$dataArray[$m][$k2] = $v2;
 						}
 					}
-					else $dataArray[$m] = $d;
 				}
 			}
 
