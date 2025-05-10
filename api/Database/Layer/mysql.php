@@ -161,12 +161,12 @@ class mysql {
         
         function getPassword($password, $field) 
         {        
-                return "PASSWORD('".$password."')";
+                return "CONCAT('*', UPPER(SHA1(UNHEX(SHA1('".$password."')))))";
         }                                            
         
         function setPassword($password)
         {
-                return "PASSWORD('".$password."')";
+                return "CONCAT('*', UPPER(SHA1(UNHEX(SHA1('".$password."')))))";
         }
         
         function getTableName($table)
